@@ -17,7 +17,9 @@ Unlike traditional music reviews that focus on sound or vibe, Song Autopsy focus
 
 ## Key Features
 
-- **Stylistic Seeds:** To avoid monotonous AI output, the review generator randomly selects from a set of "seeds" (e.g., Academic, Gonzo, Minimalist, Noir). This varies the tone, vocabulary, and structural approach of each critique.
+- **Stylistic Seeds (Style DNA):** To avoid monotonous AI output, the review generator assembles a unique "Style DNA" for every review. It randomly selects options from **10 distinct stylistic dimensions** (such as Sentence Structure, Vocabulary Level, Metaphorical Focus, Narrative Voice, etc.).
+    - With 5 options per dimension, this creates **9,765,625 possible style combinations** ($5^{10}$).
+    - This ensures that two reviews will almost never "sound" the same, varying widely between Academic, Gonzo, Minimalist, Clinical, or Poetic tones.
 - **Dynamic OG Images:** Automatically generates shareable social media cards for every review at build time using `satori`.
     - Visualizes the final score with dynamic color grading (Gold/Green/Blue/Red).
     - Displays "Masterpiece", "Excellent", "Good", or "Trash" classifications.
