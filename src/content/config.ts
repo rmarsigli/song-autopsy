@@ -52,6 +52,7 @@ const reviewsCollection = defineCollection({
     analyzed_at: z.coerce.string(), // ISO datetime format
     cynicism_level: z.number().optional(),
     model_used: z.string().optional(),
+    stylistic_dna: z.string().optional(),
     
     final_score: z.number(),
     
