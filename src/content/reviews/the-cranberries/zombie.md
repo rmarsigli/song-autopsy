@@ -2,7 +2,7 @@
 song: Zombie
 artist_id: the-cranberries
 album_id: no-need-to-argue
-analyzed_at: 2026-02-13T00:00:00.000Z
+analyzed_at: 2026-02-13T19:05:00.000Z
 cynicism_level: 5
 model_used: OpenAI ChatGPT
 final_score: 9

@@ -2,7 +2,7 @@
 song: Stairway To Heaven
 artist_id: led-zeppelin
 album_id: the-song-remains-the-same
-analyzed_at: 2026-02-13T00:00:00.000Z
+analyzed_at: 2026-02-13T18:45:52.431Z
 cynicism_level: 5
 model_used: ""
 final_score: 8.3

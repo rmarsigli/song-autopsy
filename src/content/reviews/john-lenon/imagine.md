@@ -2,7 +2,7 @@
 song: Imagine
 artist_id: john-lenon
 album_id: imagine
-analyzed_at: 2026-02-13T00:00:00.000Z
+analyzed_at: 2026-02-13T18:53:52.431Z
 cynicism_level: 5
 model_used: OpenAI ChatGPT
 final_score: 8.7

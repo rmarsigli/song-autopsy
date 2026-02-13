@@ -2,7 +2,7 @@
 song: Inútil
 artist_id: ultraje-a-rigor
 album_id: nos-vamos-invadir-sua-praia
-analyzed_at: 2026-02-13T00:00:00.000Z
+analyzed_at: 2026-02-13T18:14:52.431Z
 cynicism_level: 5
 model_used: OpenAI ChatGPT
 final_score: 8
