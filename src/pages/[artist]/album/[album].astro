@@ -1,9 +1,9 @@
 ---
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content'
-import BaseLayout from '../../layouts/base-layout.astro'
-import Breadcrumb from '../../components/breadcrumb.astro'
-import ReviewListItem from '../../components/review-list-item.astro'
-import { calculateAverageScore, sortByScore, getReviewSlugs } from '../../utils/review-helpers'
+import BaseLayout from '../../../layouts/base-layout.astro'
+import Breadcrumb from '../../../components/breadcrumb.astro'
+import ReviewListItem from '../../../components/review-list-item.astro'
+import { calculateAverageScore, sortByScore, getReviewSlugs } from '../../../utils/review-helpers'
 
 export async function getStaticPaths() {
   const reviews = await getCollection('reviews')

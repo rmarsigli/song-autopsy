@@ -153,7 +153,7 @@ const description = `${totalReviews} song reviews analyzed. Average score: ${avg
       {sortedReviews.map((review) => {
         const { artist: artistSlug, song: songSlug } = getReviewSlugs(review.id)
         const albumTitle = review.data.album_id ? albumMap[review.data.album_id] || review.data.album_id : 'Unknown'
-        const albumHref = review.data.album_id ? `/${artistSlug}/${review.data.album_id}` : undefined
+        const albumHref = review.data.album_id ? `/${artistSlug}/album/${review.data.album_id}` : undefined
         
         return (
           <ReviewListItem
@@ -191,7 +191,7 @@ const description = `${totalReviews} song reviews analyzed. Average score: ${avg
             
             return (
               <a 
-                href={`/${firstReview.data.artist_id}/${item.albumId}`}
+                href={`/${firstReview.data.artist_id}/album/${item.albumId}`}
                 class="group block bg-zinc-900 border border-zinc-800 rounded-lg p-6 hover:border-zinc-700 transition-colors"
               >
                 <div class="mb-4">
