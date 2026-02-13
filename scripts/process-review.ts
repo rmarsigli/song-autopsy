@@ -2,41 +2,9 @@
 import { readFile, writeFile, access } from 'fs/promises'
 import { parse, stringify } from 'yaml'
 import { join } from 'path'
+import { slugify, getClassification, parseGenre } from '../src/utils/helpers.js'
 
 const ROOT = join(import.meta.dirname, '..')
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-}
-
-function getClassification(score: number): string {
-  if (score >= 9.5) return 'Masterpiece'
-  if (score >= 9.0) return 'Exceptional'
-  if (score >= 8.0) return 'Excellent'
-  if (score >= 7.0) return 'Very Good'
-  if (score >= 6.0) return 'Good'
-  if (score >= 5.0) return 'Average'
-  if (score >= 4.0) return 'Below Average'
-  if (score >= 3.0) return 'Poor'
-  if (score >= 2.0) return 'Very Poor'
-  return 'Terrible'
-}
-
-function parseGenre(genreString: string | string[]): string[] {
-  if (Array.isArray(genreString)) return genreString
-  
-  return genreString
-    .split('/')
-    .map(g => g.trim())
-    .filter(Boolean)
-}
 
 async function fileExists(path: string): Promise<boolean> {
   try {
