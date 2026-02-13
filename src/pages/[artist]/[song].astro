@@ -5,7 +5,7 @@ import Breadcrumb from '../../components/breadcrumb.astro'
 import ReviewListItem from '../../components/review-list-item.astro'
 import ExaminerCard from '../../components/examiner-card.astro'
 import { getClassification, getScoreColor } from '../../utils/classification'
-import { sortByDate } from '../../utils/review-helpers'
+import { sortByDate, getReviewSlugs } from '../../utils/review-helpers'
 
 import IconTrophy from '~icons/mdi/trophy'
 import IconHeartPulse from '~icons/mdi/heart-pulse'
@@ -29,7 +29,7 @@ export async function getStaticPaths() {
     const [artist, song] = review.id.split('/')
     
     return {
-      params: { artist, song },
+      params: { artist, song: song.replace(/\.md$/, '') },
       props: { review },
     }
   })
@@ -338,7 +338,7 @@ const ogImage = `/${review.id}.png`
           
           <div class="space-y-2">
             {artistReviews.map((r) => {
-              const [artistSlug, songSlug] = r.id.split('/')
+              const { artist: artistSlug, song: songSlug } = getReviewSlugs(r.id)
               const albumTitle = r.data.album_id ? albumMap[r.data.album_id] || r.data.album_id : undefined
               
               return (

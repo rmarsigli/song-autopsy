@@ -31,3 +31,12 @@ export function sortByDate(reviews: CollectionEntry<'reviews'>[]): CollectionEnt
 export function getSiteUrl(): string {
   return import.meta.env.PUBLIC_SITE_URL || 'https://songautopsy.online'
 }
+
+/**
+ * Extract artist and song slugs from review ID, removing .md extension
+ */
+export function getReviewSlugs(reviewId: string): { artist: string; song: string } {
+  const [artist, songWithExt] = reviewId.split('/')
+  const song = songWithExt.replace(/\.md$/, '')
+  return { artist, song }
+}
