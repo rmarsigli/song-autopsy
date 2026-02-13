@@ -15,6 +15,14 @@ Unlike traditional music reviews that focus on sound or vibe, Song Autopsy focus
 5.  **Imagery** (15%) - Visual and sensory vividness.
 6.  **Originality** (10%) - Uniqueness of voice and perspective.
 
+## Key Features
+
+- **Stylistic Seeds:** To avoid monotonous AI output, the review generator randomly selects from a set of "seeds" (e.g., Academic, Gonzo, Minimalist, Noir). This varies the tone, vocabulary, and structural approach of each critique.
+- **Dynamic OG Images:** Automatically generates shareable social media cards for every review at build time using `satori`.
+    - Visualizes the final score with dynamic color grading (Gold/Green/Blue/Red).
+    - Displays "Masterpiece", "Excellent", "Good", or "Trash" classifications.
+    - Zero-runtime overhead (generated as static assets).
+
 ## Tech Stack
 
 - **Framework:** [Astro 5](https://astro.build) (SSG)
