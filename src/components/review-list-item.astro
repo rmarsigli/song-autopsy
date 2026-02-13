@@ -1,0 +1,54 @@
+---
+import { getClassification } from '../utils/classification'
+
+interface Props {
+  song: string
+  album?: string
+  albumHref?: string
+  score: number
+  href: string
+  compact?: boolean
+}
+
+const { song, album, albumHref, score, href, compact = false } = Astro.props
+const classification = getClassification(score)
+const scoreColor = score >= 8 ? 'text-green-500' : score >= 6 ? 'text-yellow-500' : 'text-red-500'
+---
+
+<div 
+  class={`flex items-center gap-4 px-4 rounded-lg border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/60 hover:border-zinc-700 transition-colors ${compact ? 'py-2' : 'py-3'}`}
+>
+  <div class="flex-1 min-w-0 flex items-center gap-2">
+    <a 
+      href={href}
+      class={`font-medium text-white hover:text-zinc-200 truncate transition-colors ${compact ? 'text-sm' : ''}`}
+    >
+      {song}
+    </a>
+    {album && (
+      <>
+        <span class="text-zinc-600 shrink-0">•</span>
+        {albumHref ? (
+          <a 
+            href={albumHref} 
+            class="text-zinc-500 hover:text-zinc-300 text-sm transition-colors shrink-0"
+          >
+            {album}
+          </a>
+        ) : (
+          <span class="text-zinc-500 text-sm shrink-0">{album}</span>
+        )}
+      </>
+    )}
+  </div>
+  
+  {!compact && (
+    <div class="text-zinc-500 text-xs uppercase tracking-wider whitespace-nowrap hidden md:block shrink-0">
+      {classification}
+    </div>
+  )}
+  
+  <div class={`font-bold ${scoreColor} ${compact ? 'text-lg' : 'text-xl'} shrink-0`}>
+    {score}
+  </div>
+</div>

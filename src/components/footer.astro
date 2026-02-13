@@ -1,0 +1,64 @@
+---
+interface Props {
+  stats?: {
+    reviews?: number;
+    artists?: number;
+    examiners?: number;
+  };
+}
+
+const { stats } = Astro.props;
+---
+
+<footer class="border-t border-zinc-800 bg-zinc-950/50 backdrop-blur-sm mt-20">
+  <div class="mx-auto max-w-7xl px-4 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Brand -->
+      <div>
+        <h3 class="text-xl font-bold text-white mb-2">
+          Song Autopsy
+        </h3>
+        <p class="text-sm text-zinc-400 leading-relaxed">
+          Dissecting lyrics with surgical precision. Every song laid bare, every verse examined under the cold light of clinical analysis.
+        </p>
+      </div>
+
+      <!-- Menu -->
+      <div>
+        <h4 class="text-sm font-semibold uppercase tracking-wider text-zinc-500 mb-3">
+          Information
+        </h4>
+        <nav class="space-y-2">
+          <a href="/how-score-works" class="block text-sm text-zinc-400 hover:text-zinc-200 transition-colors">
+            How Score Works
+          </a>
+          <a href="/terms-of-service" class="block text-sm text-zinc-400 hover:text-zinc-200 transition-colors">
+            Terms of Service
+          </a>
+          <a href="/privacy-policy" class="block text-sm text-zinc-400 hover:text-zinc-200 transition-colors">
+            Privacy Policy
+          </a>
+        </nav>
+      </div>
+
+      <!-- About -->
+      <div>
+        <h4 class="text-sm font-semibold uppercase tracking-wider text-zinc-500 mb-3">
+          About
+        </h4>
+        <p class="text-sm text-zinc-400 leading-relaxed">
+          Every review is a clinical post-mortem performed by specialized AI examiners, each delivering precise, uncompromising analysis.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-8 pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-sm text-zinc-500">
+        © {new Date().getFullYear()} Song Autopsy. All reviews are AI-generated.
+      </p>
+      <p class="text-xs text-zinc-600">
+        Powered by advanced language models
+      </p>
+    </div>
+  </div>
+</footer>
