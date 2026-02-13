@@ -1,0 +1,33 @@
+{
+  "name": "lyrics-sommelier",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "process-review": "tsx scripts/process-review.ts",
+    "generate": "tsx scripts/generate-reviews.ts",
+    "generate:web": "tsx scripts/generate-web.ts",
+    "migrate:dates": "tsx scripts/migrate-analyzed-at.ts"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.1.18",
+    "astro": "^5.17.1",
+    "iconify-icon": "^3.0.2",
+    "openai": "^6.21.0",
+    "tailwindcss": "^4.1.18",
+    "tsx": "^4.21.0",
+    "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "@iconify/json": "^2.2.439",
+    "@types/prompts": "^2.4.9",
+    "dotenv": "^17.3.1",
+    "prompts": "^2.4.2",
+    "unplugin-icons": "^23.0.1"
+  }
+}
