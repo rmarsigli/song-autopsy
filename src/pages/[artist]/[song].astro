@@ -3,6 +3,7 @@ import { getCollection, getEntry, type CollectionEntry } from 'astro:content'
 import BaseLayout from '../../layouts/base-layout.astro'
 import Breadcrumb from '../../components/breadcrumb.astro'
 import ReviewListItem from '../../components/review-list-item.astro'
+import ExaminerCard from '../../components/examiner-card.astro'
 import { getClassification, getScoreColor } from '../../utils/classification'
 import { sortByDate } from '../../utils/review-helpers'
 
@@ -47,12 +48,6 @@ const album = review.data.album_id ? await getEntry('albums', review.data.album_
 if (!artist) {
   throw new Error(`Missing artist data for review: ${review.id}`)
 }
-
-// Find examiner by model_used
-const allExaminers = await getCollection('examiners')
-const examiner = review.data.model_used 
-  ? allExaminers.find(s => s.data.model_id === review.data.model_used)
-  : null
 
 const classification = getClassification(review.data.final_score)
 const scoreColor = getScoreColor(review.data.final_score)
@@ -212,36 +207,12 @@ const description = `${classification} (${review.data.final_score}/10). ${review
         <Content />
 
         <!-- Examiner Card -->
-        {examiner && (
-          <div class="not-prose mt-12 bg-gradient-to-br from-blue-950/30 to-gray-950/20 border border-blue-900/50 rounded-lg p-6">
-            <div class="flex items-start gap-4">
-              <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-gray-700 rounded-full flex items-center justify-center text-2xl font-bold text-white shrink-0">
-                {examiner.data.name.split(' ').map(n => n[0]).join('')}
-              </div>
-              <div class="flex-1">
-                <div class="text-xs uppercase tracking-wider text-blue-500 font-semibold mb-1">
-                  Examined by
-                </div>
-                <h3 class="text-xl font-bold text-white mb-1">
-                  {examiner.data.name}
-                </h3>
-                <div class="text-sm text-blue-400/80 mb-3">
-                  {examiner.data.title}
-                </div>
-                <p class="text-sm text-zinc-300 leading-relaxed">
-                  {examiner.data.bio}
-                </p>
-                <div class="mt-4 flex flex-wrap gap-2">
-                  {examiner.data.style.map(tag => (
-                    <span class="text-xs px-2 py-1 bg-blue-900/30 border border-blue-800/50 rounded text-blue-400">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        <div class="not-prose mt-12">
+          <ExaminerCard 
+            model={review.data.model_used}
+            cynicism={review.data.cynicism_level}
+          />
+        </div>
       </article>
 
       <!-- Right Sidebar: Metadata -->

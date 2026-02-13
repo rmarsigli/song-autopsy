@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content'
+
+interface Props {
+  model: string
+  cynicism?: number
+}
+
+const { model, cynicism } = Astro.props
+
+const examiners = await getCollection('examiners')
+
+// Find examiner with fallbacks
+let examiner = examiners.find(e => e.data.model_id === model)
+
+// Fallback logic for mismatched IDs (e.g. "OpenAI ChatGPT" -> "gpt-5.2...")
+if (!examiner) {
+  // Default to Marcus Sterling (Dr. Sterling) for GPT models or generic fallback
+  examiner = examiners.find(e => e.data.model_id.includes('gpt')) || examiners[0]
+}
+
+const data = examiner ? examiner.data : {
+  name: 'Unknown Analyst',
+  title: 'Reviewer',
+  bio: 'Analysis provided by internal staff.',
+  style: ['Analytical'],
+  model_id: model
+}
+---
+
+<div class="bg-zinc-900/50 border-l-4 border-indigo-500 rounded-r-xl p-6 shadow-sm">
+  <div class="mb-4">
+    <h3 class="text-xl font-bold text-white leading-tight">
+      {data.name}
+    </h3>
+    <p class="text-indigo-400 text-sm font-medium uppercase tracking-wider">
+      {data.title}
+    </p>
+  </div>
+
+  <p class="text-zinc-400 text-sm leading-relaxed mb-6 italic">
+    "{data.bio}"
+  </p>
+
+  <div class={`grid grid-cols-1 ${cynicism !== undefined ? 'md:grid-cols-2' : ''} gap-6 pt-4 border-t border-zinc-800/50`}>
+    <div>
+      <span class="block text-xs text-zinc-500 uppercase tracking-wider font-bold mb-2">
+        Critical Focus
+      </span>
+      <div class="flex flex-wrap gap-2">
+        {data.style.map((tag: string) => (
+          <span class="px-2 py-0.5 bg-zinc-800 rounded text-xs text-zinc-300 border border-zinc-700">
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
+    
+    {cynicism !== undefined && (
+    <div>
+      <span class="block text-xs text-zinc-500 uppercase tracking-wider font-bold mb-2">
+        Cynicism Level
+      </span>
+      <div class="flex items-center gap-3">
+        <div class="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
+          <div 
+            class={`h-full rounded-full ${
+              cynicism >= 8 ? 'bg-red-500' : 
+              cynicism >= 5 ? 'bg-yellow-500' : 
+              'bg-emerald-500'
+            }`}
+            style={`width: ${cynicism * 10}%`}
+          />
+        </div>
+        <span class="text-sm font-bold text-zinc-300 tabular-nums">
+          {cynicism}/10
+        </span>
+      </div>
+    </div>
+    )}
+  </div>
+</div>
