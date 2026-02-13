@@ -15,11 +15,13 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.7.0",
     "@google/generative-ai": "^0.24.1",
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.17.1",
     "iconify-icon": "^3.0.2",
     "openai": "^6.21.0",
+    "satori": "^0.19.2",
     "tailwindcss": "^4.1.18",
     "tsx": "^4.21.0",
     "yaml": "^2.8.2"

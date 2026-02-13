@@ -122,11 +122,13 @@ const reviewSchema = {
 }
 
 const description = `${classification} (${review.data.final_score}/10). ${review.data.texts.emotional_impact.substring(0, 150)}...`
+const ogImage = `/${review.id}.png`
 ---
 
 <BaseLayout 
   title={`${review.data.song} by ${artist.data.name} - Review and Analysis`}
   description={description}
+  image={ogImage}
   type="article"
   schema={reviewSchema}
 >
