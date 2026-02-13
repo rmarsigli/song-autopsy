@@ -7,6 +7,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import OpenAI from 'openai'
 import prompts from 'prompts'
 import { spawnSync } from 'child_process'
+import { getRandomSeeds } from '../src/config/seeds'
 
 const colors = {
   reset: '\x1b[0m',
@@ -283,7 +284,7 @@ function slugify(text: string): string {
     .replace(/^-|-$/g, '')
 }
 
-async function generateWithGemini(systemPrompt: string, userPrompt: string): Promise<GenerationResult> {
+async function generateWithGemini(systemPrompt: string, userPrompt: string, dna: string): Promise<GenerationResult> {
   const genAI = new GoogleGenerativeAI(CONFIG.gemini.apiKey)
   const model = genAI.getGenerativeModel({ model: CONFIG.gemini.model })
 
@@ -297,6 +298,7 @@ async function generateWithGemini(systemPrompt: string, userPrompt: string): Pro
   return {
     content: response.text(),
     modelId: CONFIG.gemini.model,
+    dna,
     tokens: response.usageMetadata ? {
       input: response.usageMetadata.promptTokenCount || 0,
       output: response.usageMetadata.candidatesTokenCount || 0,
@@ -308,6 +310,7 @@ async function generateWithGemini(systemPrompt: string, userPrompt: string): Pro
 interface GenerationResult {
   content: string
   modelId: string
+  dna: string
   tokens?: {
     input: number
     output: number
@@ -315,7 +318,7 @@ interface GenerationResult {
   }
 }
 
-async function generateWithOpenAI(systemPrompt: string, userPrompt: string): Promise<GenerationResult> {
+async function generateWithOpenAI(systemPrompt: string, userPrompt: string, dna: string): Promise<GenerationResult> {
   const openai = new OpenAI({ apiKey: CONFIG.openai.apiKey })
 
   const response = await openai.chat.completions.create({
@@ -330,6 +333,7 @@ async function generateWithOpenAI(systemPrompt: string, userPrompt: string): Pro
   return {
     content: response.choices[0]?.message?.content || '',
     modelId: CONFIG.openai.model,
+    dna,
     tokens: response.usage ? {
       input: response.usage.prompt_tokens,
       output: response.usage.completion_tokens,
@@ -342,6 +346,9 @@ async function generateReview(input: ReviewInput, agent?: 'gemini' | 'chat-gpt')
   const selectedAgent = agent || CONFIG.defaultAgent
   const cynicism = input.cynicism ?? CONFIG.defaultCynicism
   const systemPromptWithCynicism = SYSTEM_PROMPT.replace('{{CYNICISM_LEVEL}}', String(cynicism))
+  
+  // Generate the DNA and Text for this specific review
+  const { text: seedsText, dna } = getRandomSeeds()
 
   const userPrompt = `
 Generate a critical analysis for the following song:
@@ -358,6 +365,16 @@ ${input.genre ? `**Genre:** ${input.genre}` : ''}
 ${input.lyrics}
 \`\`\`
 
+---
+
+### ⚠️ STYLISTIC INSTRUCTIONS (MUST FOLLOW)
+
+While keeping the **SCORING METHODOLOGY** completely objective and unaffected, adopt the following **WRITING STYLE** for the essay portion of the review. These seeds define your "voice" for this specific text:
+
+${seedsText}
+
+---
+
 Follow the system prompt exactly. Output only the Markdown document.
 `
 
@@ -366,11 +383,13 @@ Follow the system prompt exactly. Output only the Markdown document.
   
   log.info(`Generating review for "${input.song}" by ${input.artist}...`)
   log.dim(`Using ${agentName} (${modelName})`)
+  log.dim(`Stylistic DNA: [${dna}]`)
 
   if (selectedAgent === 'chat-gpt') {
-    return await generateWithOpenAI(systemPromptWithCynicism, userPrompt)
+    return await generateWithOpenAI(systemPromptWithCynicism, userPrompt, dna)
   } else {
-    return await generateWithGemini(systemPromptWithCynicism, userPrompt)
+    // Note: ensure generateWithGemini is updated to accept/return DNA too
+    return await generateWithGemini(systemPromptWithCynicism, userPrompt, dna)
   }
 }
 
@@ -392,11 +411,16 @@ async function processReview(input: ReviewInput): Promise<void> {
   try {
     const result = await generateReview(input)
     
-    // Inject model_used into frontmatter
-    const contentWithModel = result.content.replace(
-      /^(---[\s\S]*?)model_used: ""([\s\S]*?)$/m,
-      `$1model_used: "${result.modelId}"$2`
-    )
+    // Inject model_used AND stylistic_dna into frontmatter
+    const contentWithModel = result.content
+      .replace(
+        /^(---[\s\S]*?)model_used: ""([\s\S]*?)$/m,
+        `$1model_used: "${result.modelId}"$2`
+      )
+      .replace(
+        /^(---[\s\S]*?)(\n---)$/m,
+        `$1\nstylistic_dna: "${result.dna}"$2`
+      )
     
     const filepath = await saveReview(artistSlug, songSlug, contentWithModel)
 
