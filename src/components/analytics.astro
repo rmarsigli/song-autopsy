@@ -1,0 +1,16 @@
+---
+const gaTag = import.meta.env.GA_TAG;
+---
+
+{gaTag && (
+  <>
+    <!-- Google tag (gtag.js) -->
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaTag}`}></script>
+    <script is:inline define:vars={{ gaTag }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', gaTag);
+    </script>
+  </>
+)}
