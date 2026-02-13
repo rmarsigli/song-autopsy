@@ -124,13 +124,20 @@ async function processReview(reviewPath: string): Promise<void> {
   delete frontmatter.calculated_final_score
   delete frontmatter.classification  // Will be calculated on-demand
   
-  // Fill analyzed_at with current ISO datetime if empty
+  // Fill analyzed_at with current ISO datetime if empty or date-only
   if (!frontmatter.analyzed_at || frontmatter.analyzed_at === '') {
     frontmatter.analyzed_at = new Date().toISOString()
   }
-  // Convert date-only to datetime if needed
   else if (/^\d{4}-\d{2}-\d{2}$/.test(frontmatter.analyzed_at)) {
-    frontmatter.analyzed_at = new Date(frontmatter.analyzed_at).toISOString()
+      // If user provides a date only, we assume they mean "that day at current time" 
+      // OR if it's today, we use current time.
+      const today = new Date().toISOString().split('T')[0]
+      if (frontmatter.analyzed_at === today) {
+         frontmatter.analyzed_at = new Date().toISOString()
+      } else {
+         // Should we add a default time? 12:00?
+         frontmatter.analyzed_at = new Date(frontmatter.analyzed_at).toISOString()
+      }
   }
   
   const newFrontmatter: Record<string, any> = {
