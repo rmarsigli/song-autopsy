@@ -1,4 +1,6 @@
 ---
+import IconGithub from '~icons/mdi/github'
+
 interface Props {
   stats?: {
     reviews?: number;
@@ -52,13 +54,38 @@ const { stats } = Astro.props;
       </div>
     </div>
 
-    <div class="mt-8 pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-4">
-      <p class="text-sm text-zinc-500">
+    <div class="mt-8 pt-8 border-t border-zinc-800">
+      <!-- Copyright -->
+      <p class="text-sm text-zinc-500 text-center mb-4">
         © {new Date().getFullYear()} Song Autopsy. All reviews are AI-generated.
       </p>
-      <p class="text-xs text-zinc-600">
-        Powered by advanced language models
-      </p>
+      
+      <!-- Bottom Links -->
+      <div class="flex flex-wrap max-lg:flex-col items-center justify-center gap-3 text-xs text-zinc-600">
+        <span>Powered by advanced language models</span>
+        <span class="text-zinc-700 max-lg:hidden">•</span>
+        <a href="#" class="flex items-center gap-1 hover:text-zinc-400 transition-colors">
+          <span>Created by</span>
+          <img
+            src="/rafhael.svg"
+            alt="Rafhael Marsigli"
+            class="w-6 h-6 rounded-sm"
+            width={64}
+            height={64}
+          />
+        </a>
+        <span class="text-zinc-700 max-lg:hidden">•</span>
+        <a 
+          href="https://github.com/rmarsigli/song-autopsy" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1"
+          aria-label="GitHub Repository"
+        >
+          <IconGithub class="w-5 h-5" />
+          <span class="hidden sm:inline">GitHub</span>
+        </a>
+      </div>
     </div>
   </div>
 </footer>
