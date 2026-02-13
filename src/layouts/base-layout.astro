@@ -1,9 +1,17 @@
 ---
 import '../styles/app.css';
+import Header from '../components/header.astro';
 import Footer from '../components/footer.astro';
+import SEO from '../components/seo.astro';
+import Analytics from '../components/analytics.astro';
 
 interface Props {
   title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  schema?: object;
+  canonical?: string;
   stats?: {
     reviews?: number;
     artists?: number;
@@ -11,20 +19,40 @@ interface Props {
   };
 }
 
-const { title = 'Song Autopsy', stats } = Astro.props;
+const { 
+  title = 'Song Autopsy',
+  description = 'AI-powered lyrical post-mortem. Surgical analysis of song lyrics with clinical precision.',
+  image,
+  type,
+  schema,
+  canonical,
+  stats 
+} = Astro.props;
+
+const fullTitle = title === 'Song Autopsy' ? title : `${title} - Song Autopsy`;
 ---
 
 <!doctype html>
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="AI-powered lyrical post-mortem" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    
+    <Analytics />
+    
+    <SEO 
+      title={fullTitle}
+      description={description}
+      image={image}
+      type={type}
+      schema={schema}
+      canonical={canonical}
+    />
   </head>
   <body class="bg-zinc-950 text-zinc-100 min-h-screen antialiased flex flex-col">
+    <Header />
     <main class="flex-1">
       <slot />
     </main>
