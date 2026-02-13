@@ -1,0 +1,139 @@
+---
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content'
+import BaseLayout from '../../layouts/base-layout.astro'
+import Breadcrumb from '../../components/breadcrumb.astro'
+
+export async function getStaticPaths() {
+  const reviews = await getCollection('reviews')
+  
+  // Group by artist
+  const byArtist = reviews.reduce((acc, review) => {
+    const [artistSlug] = review.id.split('/')
+    if (!acc[artistSlug]) acc[artistSlug] = []
+    acc[artistSlug].push(review)
+    return acc
+  }, {} as Record<string, CollectionEntry<'reviews'>[]>)
+  
+  return Object.entries(byArtist).map(([artist, artistReviews]) => ({
+    params: { artist },
+    props: { artistReviews },
+  }))
+}
+
+type Props = {
+  artistReviews: CollectionEntry<'reviews'>[]
+}
+
+const { artistReviews } = Astro.props as Props
+const firstReview = artistReviews[0]
+const artist = await getEntry('artists', firstReview.data.artist_id)
+
+if (!artist) {
+  throw new Error(`Artist not found: ${firstReview.data.artist_id}`)
+}
+
+// Get all albums and aggregate stats
+const albums = await getCollection('albums')
+const albumsMap = new Map(albums.map(a => [a.id, a.data]))
+
+// Group reviews by album and calculate stats
+const albumStats = artistReviews.reduce((acc, review) => {
+  const albumId = review.data.album_id
+  if (!albumId) return acc
+  
+  if (!acc[albumId]) {
+    acc[albumId] = {
+      albumId,
+      reviews: [],
+      totalScore: 0,
+    }
+  }
+  
+  acc[albumId].reviews.push(review)
+  acc[albumId].totalScore += review.data.final_score
+  
+  return acc
+}, {} as Record<string, { albumId: string, reviews: CollectionEntry<'reviews'>[], totalScore: number }>)
+
+// Convert to array and add album data
+const albumList = Object.values(albumStats)
+  .map(stat => ({
+    ...stat,
+    albumData: albumsMap.get(stat.albumId),
+    avgScore: (stat.totalScore / stat.reviews.length).toFixed(1),
+  }))
+  .filter(item => item.albumData)
+  .sort((a, b) => {
+    // Sort by year descending, then by name
+    const yearA = parseInt(a.albumData?.year || '0')
+    const yearB = parseInt(b.albumData?.year || '0')
+    if (yearB !== yearA) return yearB - yearA
+    return (a.albumData?.title || '').localeCompare(b.albumData?.title || '')
+  })
+---
+
+<BaseLayout title={`${artist.data.name} - Albums`}>
+  <div class="mx-auto max-w-6xl px-4 py-12">
+    <Breadcrumb items={[
+      { label: 'Home', href: '/' },
+      { label: artist.data.name, href: `/${firstReview.data.artist_id}` },
+      { label: 'Albums' }
+    ]} />
+
+    <!-- Header -->
+    <div class="mb-12 border-b border-zinc-800 pb-8">
+      <h1 class="mb-4 text-5xl font-bold tracking-tight text-white">
+        {artist.data.name} — Albums
+      </h1>
+      <p class="text-lg text-zinc-400">
+        {albumList.length} {albumList.length === 1 ? 'album' : 'albums'} reviewed
+      </p>
+    </div>
+
+    <!-- Albums Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {albumList.map((item) => {
+        const album = item.albumData!
+        const scoreColor = parseFloat(item.avgScore) >= 8 ? 'text-green-500' : 
+                          parseFloat(item.avgScore) >= 6 ? 'text-yellow-500' : 'text-red-500'
+        
+        return (
+          <a 
+            href={`/${firstReview.data.artist_id}/${item.albumId}`}
+            class="group block bg-zinc-900 border border-zinc-800 rounded-lg p-6 hover:border-zinc-700 transition-colors"
+          >
+            <div class="mb-4">
+              <h3 class="text-xl font-bold text-white group-hover:text-zinc-200 transition-colors mb-2">
+                {album.title}
+              </h3>
+              {album.year && (
+                <p class="text-sm text-zinc-500">{album.year}</p>
+              )}
+            </div>
+            
+            {album.genre && album.genre.length > 0 && (
+              <div class="mb-4">
+                <div class="flex flex-wrap gap-2">
+                  {album.genre.map(g => (
+                    <span class="text-xs px-2 py-1 rounded bg-zinc-800 text-zinc-400">
+                      {g}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <div class="flex items-center justify-between pt-4 border-t border-zinc-800">
+              <div class="text-sm text-zinc-400">
+                <span class="font-semibold text-zinc-300">{item.reviews.length}</span> {item.reviews.length === 1 ? 'track' : 'tracks'}
+              </div>
+              <div class={`text-2xl font-bold ${scoreColor}`}>
+                {item.avgScore}
+              </div>
+            </div>
+          </a>
+        )
+      })}
+    </div>
+  </div>
+</BaseLayout>
