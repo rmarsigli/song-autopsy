@@ -3,7 +3,8 @@ import { getCollection, getEntry, type CollectionEntry } from 'astro:content'
 import BaseLayout from '../../layouts/base-layout.astro'
 import Breadcrumb from '../../components/breadcrumb.astro'
 import ReviewListItem from '../../components/review-list-item.astro'
-import { getClassification } from '../../utils/classification'
+import { getClassification, getScoreColor } from '../../utils/classification'
+import { sortByDate } from '../../utils/review-helpers'
 
 import IconTrophy from '~icons/mdi/trophy'
 import IconHeartPulse from '~icons/mdi/heart-pulse'
@@ -54,15 +55,12 @@ const examiner = review.data.model_used
   : null
 
 const classification = getClassification(review.data.final_score)
-const scoreColor = review.data.final_score >= 8 ? 'text-green-500' : 
-                   review.data.final_score >= 6 ? 'text-yellow-500' : 'text-red-500'
+const scoreColor = getScoreColor(review.data.final_score)
 
 // Get other reviews from the same artist
 const allReviews = await getCollection('reviews')
-const artistReviews = allReviews
-  .filter(r => r.data.artist_id === review.data.artist_id && r.id !== review.id)
-  .sort((a, b) => new Date(b.data.analyzed_at).getTime() - new Date(a.data.analyzed_at).getTime())
-  .slice(0, 10)
+const artistReviewsAll = allReviews.filter(r => r.data.artist_id === review.data.artist_id && r.id !== review.id)
+const artistReviews = sortByDate(artistReviewsAll).slice(0, 10)
 
 // Get albums for display
 const albums = await getCollection('albums')
@@ -94,9 +92,49 @@ if (album) {
 }
 
 breadcrumbItems.push({ label: review.data.song })
+
+// Schema.org Review
+const reviewSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Review',
+  itemReviewed: {
+    '@type': 'MusicRecording',
+    name: review.data.song,
+    byArtist: {
+      '@type': 'MusicGroup',
+      name: artist.data.name,
+      ...(artist.data.genre && { genre: artist.data.genre }),
+    },
+    ...(album && {
+      inAlbum: {
+        '@type': 'MusicAlbum',
+        name: album.data.title,
+      }
+    }),
+  },
+  reviewRating: {
+    '@type': 'Rating',
+    ratingValue: review.data.final_score,
+    bestRating: 10,
+    worstRating: 0,
+  },
+  author: {
+    '@type': 'Organization',
+    name: 'Song Autopsy',
+  },
+  datePublished: review.data.analyzed_at,
+  reviewBody: review.data.texts.emotional_impact,
+}
+
+const description = `${classification} (${review.data.final_score}/10). ${review.data.texts.emotional_impact.substring(0, 150)}...`
 ---
 
-<BaseLayout title={`${review.data.song} - ${artist.data.name}`}>
+<BaseLayout 
+  title={`${review.data.song} - ${artist.data.name}`}
+  description={description}
+  type="article"
+  schema={reviewSchema}
+>
   <div class="mx-auto max-w-7xl px-4 py-8">
     <Breadcrumb items={breadcrumbItems} />
 
@@ -175,19 +213,19 @@ breadcrumbItems.push({ label: review.data.song })
 
         <!-- Examiner Card -->
         {examiner && (
-          <div class="not-prose mt-12 bg-gradient-to-br from-red-950/30 to-gray-950/20 border border-red-900/50 rounded-lg p-6">
+          <div class="not-prose mt-12 bg-gradient-to-br from-blue-950/30 to-gray-950/20 border border-blue-900/50 rounded-lg p-6">
             <div class="flex items-start gap-4">
-              <div class="w-16 h-16 bg-gradient-to-br from-red-600 to-gray-700 rounded-full flex items-center justify-center text-2xl font-bold text-white shrink-0">
+              <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-gray-700 rounded-full flex items-center justify-center text-2xl font-bold text-white shrink-0">
                 {examiner.data.name.split(' ').map(n => n[0]).join('')}
               </div>
               <div class="flex-1">
-                <div class="text-xs uppercase tracking-wider text-red-500 font-semibold mb-1">
+                <div class="text-xs uppercase tracking-wider text-blue-500 font-semibold mb-1">
                   Examined by
                 </div>
                 <h3 class="text-xl font-bold text-white mb-1">
                   {examiner.data.name}
                 </h3>
-                <div class="text-sm text-red-400/80 mb-3">
+                <div class="text-sm text-blue-400/80 mb-3">
                   {examiner.data.title}
                 </div>
                 <p class="text-sm text-zinc-300 leading-relaxed">
@@ -195,7 +233,7 @@ breadcrumbItems.push({ label: review.data.song })
                 </p>
                 <div class="mt-4 flex flex-wrap gap-2">
                   {examiner.data.style.map(tag => (
-                    <span class="text-xs px-2 py-1 bg-red-900/30 border border-red-800/50 rounded text-red-400">
+                    <span class="text-xs px-2 py-1 bg-blue-900/30 border border-blue-800/50 rounded text-blue-400">
                       {tag}
                     </span>
                   ))}
@@ -245,15 +283,15 @@ breadcrumbItems.push({ label: review.data.song })
           )}
 
           {review.data.essential_for && review.data.essential_for.length > 0 && (
-            <div class="bg-blue-950/30 border border-blue-900/50 rounded-lg p-4">
-              <h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-blue-400 mb-3">
+            <div class="bg-zinc-800/30 border border-zinc-700/50 rounded-lg p-4">
+              <h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-zinc-400 mb-3">
                 <IconBookmark class="w-4 h-4" />
                 <span>Essential For</span>
               </h3>
               <ul class="space-y-2 text-sm text-zinc-300">
                 {review.data.essential_for.map(item => (
                   <li class="flex gap-2">
-                    <span class="text-blue-500 shrink-0">→</span>
+                    <span class="text-zinc-500 shrink-0">→</span>
                     <span>{item}</span>
                   </li>
                 ))}

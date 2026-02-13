@@ -3,6 +3,8 @@ import { getCollection, getEntry, type CollectionEntry } from 'astro:content'
 import BaseLayout from '../../layouts/base-layout.astro'
 import Breadcrumb from '../../components/breadcrumb.astro'
 import ReviewListItem from '../../components/review-list-item.astro'
+import { calculateAverageScore, sortByScore, getSiteUrl } from '../../utils/review-helpers'
+import { getScoreColor } from '../../utils/helpers'
 
 export async function getStaticPaths() {
   const reviews = await getCollection('reviews')
@@ -34,11 +36,11 @@ if (!artist) {
 }
 
 // Ordenar por score (maior primeiro)
-const sortedReviews = [...artistReviews].sort((a, b) => b.data.final_score - a.data.final_score)
+const sortedReviews = sortByScore(artistReviews)
 
 // Calcular estatísticas
 const totalReviews = artistReviews.length
-const avgScore = (artistReviews.reduce((sum, r) => sum + r.data.final_score, 0) / totalReviews).toFixed(1)
+const avgScore = calculateAverageScore(artistReviews)
 
 // Buscar albums para mostrar títulos
 const albums = await getCollection('albums')
@@ -86,9 +88,25 @@ const hasMoreAlbums = albumList.length > 3
 
 // Count unique albums for this artist
 const uniqueAlbums = albumList.length
+
+// Schema.org MusicGroup
+const siteUrl = getSiteUrl();
+const musicGroupSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'MusicGroup',
+  name: artist.data.name,
+  ...(artist.data.genre && { genre: artist.data.genre }),
+  sameAs: [`${siteUrl}/${firstReview.data.artist_id}`],
+}
+
+const description = `${totalReviews} song reviews analyzed. Average score: ${avgScore}/10. ${artist.data.genre?.join(', ') || 'Music artist'}.`
 ---
 
-<BaseLayout title={`${artist.data.name} - Lyrics Sommelier`}>
+<BaseLayout 
+  title={`${artist.data.name}`}
+  description={description}
+  schema={musicGroupSchema}
+>
   <div class="mx-auto max-w-6xl px-4 py-12">
     <Breadcrumb items={[
       { label: 'Home', href: '/' },
@@ -169,8 +187,7 @@ const uniqueAlbums = albumList.length
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           {recentAlbums.map((item) => {
             const album = item.albumData!
-            const scoreColor = parseFloat(item.avgScore) >= 8 ? 'text-green-500' : 
-                              parseFloat(item.avgScore) >= 6 ? 'text-yellow-500' : 'text-red-500'
+            const scoreColor = getScoreColor(parseFloat(item.avgScore))
             
             return (
               <a 

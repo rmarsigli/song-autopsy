@@ -3,6 +3,7 @@ import { getCollection, getEntry, type CollectionEntry } from 'astro:content'
 import BaseLayout from '../../layouts/base-layout.astro'
 import Breadcrumb from '../../components/breadcrumb.astro'
 import ReviewListItem from '../../components/review-list-item.astro'
+import { calculateAverageScore, sortByScore } from '../../utils/review-helpers'
 
 export async function getStaticPaths() {
   const reviews = await getCollection('reviews')
@@ -45,11 +46,11 @@ if (!artist || !album) {
 }
 
 // Sort by score (highest first)
-const sortedReviews = [...albumReviews].sort((a, b) => b.data.final_score - a.data.final_score)
+const sortedReviews = sortByScore(albumReviews)
 
 // Calculate stats
 const totalReviews = albumReviews.length
-const avgScore = (albumReviews.reduce((sum, r) => sum + r.data.final_score, 0) / totalReviews).toFixed(1)
+const avgScore = calculateAverageScore(albumReviews)
 ---
 
 <BaseLayout title={`${album.data.title} - ${artist.data.name}`}>

@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/base-layout.astro';
 import ReviewCard from '../components/review-card.astro';
+import { getSiteUrl, sortByDate, sortByScore } from '../utils/review-helpers';
 
 const allReviews = await getCollection('reviews');
 const allArtists = await getCollection('artists');
@@ -16,13 +17,9 @@ const reviewsWithArtist = allReviews.map(review => ({
   artistName: artistMap[review.data.artist_id] || review.data.artist_id
 }));
 
-const sortedByDate = [...reviewsWithArtist].sort((a, b) => 
-  new Date(b.data.analyzed_at).getTime() - new Date(a.data.analyzed_at).getTime()
-);
+const sortedByDate = sortByDate(reviewsWithArtist);
 
-const sortedByScore = [...reviewsWithArtist].sort((a, b) => 
-  b.data.final_score - a.data.final_score
-);
+const sortedByScore = sortByScore(reviewsWithArtist);
 
 const latestReviews = sortedByDate.slice(0, 6);
 const topRated = sortedByScore.slice(0, 5);
@@ -33,9 +30,41 @@ const stats = {
   artists: allArtists.length,
   examiners: allExaminers.length,
 };
+
+// Schema.org CollectionPage
+const siteUrl = getSiteUrl();
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Song Autopsy - AI-Powered Lyrical Analysis',
+  description: 'Surgical analysis of song lyrics. Cold. Clinical. Precise.',
+  url: siteUrl,
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: latestReviews.length,
+    itemListElement: latestReviews.map((review, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Review',
+        itemReviewed: {
+          '@type': 'MusicRecording',
+          name: review.data.song,
+          byArtist: {
+            '@type': 'MusicGroup',
+            name: review.artistName,
+          }
+        }
+      }
+    }))
+  }
+}
 ---
 
-<BaseLayout stats={stats}>
+<BaseLayout 
+  stats={stats}
+  schema={collectionSchema}
+>
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     
     <section class="mb-20">
@@ -96,7 +125,7 @@ const stats = {
       </div>
 
       <div>
-        <h2 class="text-2xl font-bold mb-6 text-red-400 flex items-center gap-2">
+        <h2 class="text-2xl font-bold mb-6 text-blue-400 flex items-center gap-2">
           <span>↓</span> Bottom Rated
         </h2>
         <div class="space-y-4">
@@ -112,7 +141,7 @@ const stats = {
                     </h3>
                     <p class="text-sm text-zinc-500">{review.artistName}</p>
                   </div>
-                  <span class="text-lg font-bold text-red-400 shrink-0">
+                  <span class="text-lg font-bold text-blue-400 shrink-0">
                     {review.data.final_score.toFixed(1)}
                   </span>
                 </div>

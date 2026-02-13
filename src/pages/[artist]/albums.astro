@@ -2,6 +2,8 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content'
 import BaseLayout from '../../layouts/base-layout.astro'
 import Breadcrumb from '../../components/breadcrumb.astro'
+import { calculateAverageScore } from '../../utils/review-helpers'
+import { getScoreColor } from '../../utils/helpers'
 
 export async function getStaticPaths() {
   const reviews = await getCollection('reviews')
@@ -60,7 +62,7 @@ const albumList = Object.values(albumStats)
   .map(stat => ({
     ...stat,
     albumData: albumsMap.get(stat.albumId),
-    avgScore: (stat.totalScore / stat.reviews.length).toFixed(1),
+    avgScore: calculateAverageScore(stat.reviews),
   }))
   .filter(item => item.albumData)
   .sort((a, b) => {
@@ -94,8 +96,7 @@ const albumList = Object.values(albumStats)
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {albumList.map((item) => {
         const album = item.albumData!
-        const scoreColor = parseFloat(item.avgScore) >= 8 ? 'text-green-500' : 
-                          parseFloat(item.avgScore) >= 6 ? 'text-yellow-500' : 'text-red-500'
+        const scoreColor = getScoreColor(parseFloat(item.avgScore))
         
         return (
           <a 
