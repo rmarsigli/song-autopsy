@@ -236,11 +236,11 @@ export async function getStaticPaths() {
   const reviews = await getCollection('reviews')
   
   return reviews.map((review) => {
+    const [artist, songWithExt] = review.id.split('/')
+    const song = songWithExt.replace(/\.md$/, '')
+    
     return {
-      params: {
-        artist: slugify(review.data.artist_id),
-        song: slugify(review.data.song),
-      },
+      params: { artist, song },
       props: { review },
     }
   })

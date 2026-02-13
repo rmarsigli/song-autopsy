@@ -122,7 +122,7 @@ const reviewSchema = {
 }
 
 const description = `${classification} (${review.data.final_score}/10). ${review.data.texts.emotional_impact.substring(0, 150)}...`
-const ogImage = `/${review.id}.png`
+const ogImage = `/${review.id.replace(/\.md$/, '')}.png`
 ---
 
 <BaseLayout 
