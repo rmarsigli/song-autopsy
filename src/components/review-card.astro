@@ -1,5 +1,5 @@
 ---
-import { getClassification } from '../utils/classification';
+import { getClassification, getScoreColor } from '../utils/classification';
 
 interface Props {
   song: string;
@@ -12,7 +12,7 @@ interface Props {
 const { song, artistName, score, snippet, href } = Astro.props;
 
 const classification = getClassification(score);
-const scoreColor = score >= 8 ? 'text-emerald-400' : score >= 6 ? 'text-blue-400' : score >= 4 ? 'text-amber-400' : 'text-red-400';
+const scoreColor = getScoreColor(score);
 ---
 
 <a href={href} class="group block bg-zinc-900 border border-zinc-800 rounded-lg p-6 hover:border-zinc-700 transition-colors">

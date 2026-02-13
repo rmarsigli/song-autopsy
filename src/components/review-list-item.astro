@@ -1,5 +1,5 @@
 ---
-import { getClassification } from '../utils/classification'
+import { getClassification, getScoreColor } from '../utils/classification'
 
 interface Props {
   song: string
@@ -12,7 +12,7 @@ interface Props {
 
 const { song, album, albumHref, score, href, compact = false } = Astro.props
 const classification = getClassification(score)
-const scoreColor = score >= 8 ? 'text-green-500' : score >= 6 ? 'text-yellow-500' : 'text-red-500'
+const scoreColor = getScoreColor(score)
 ---
 
 <div 
