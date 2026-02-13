@@ -1,0 +1,153 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/base-layout.astro';
+import { getSiteUrl } from '../utils/review-helpers';
+
+// Get all artists
+const allArtists = await getCollection('artists');
+
+// Sort alphabetically
+const sortedArtists = allArtists.sort((a, b) => 
+  a.data.name.localeCompare(b.data.name)
+);
+
+// Get review count per artist
+const allReviews = await getCollection('reviews');
+const reviewCounts = allReviews.reduce((acc, review) => {
+  const artistSlug = review.data.artist_id;
+  acc[artistSlug] = (acc[artistSlug] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+
+// Schema.org ItemList
+const siteUrl = getSiteUrl();
+const itemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Music Artists',
+  numberOfItems: sortedArtists.length,
+  itemListElement: sortedArtists.slice(0, 20).map((artist, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'MusicGroup',
+      name: artist.data.name,
+      url: `${siteUrl}/${artist.id}`,
+      ...(artist.data.genre && { genre: artist.data.genre }),
+    }
+  }))
+}
+---
+
+<BaseLayout 
+  title="Artists"
+  description={`Browse ${sortedArtists.length} artists with AI-generated lyrical analysis. Discover detailed reviews and critical assessments of song lyrics.`}
+  schema={itemListSchema}
+>
+  <div class="mx-auto max-w-7xl px-4 py-12">
+    <!-- Header -->
+    <div class="mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+        Artists
+      </h1>
+      <p class="text-lg text-zinc-400 mb-6">
+        {sortedArtists.length} artists under examination
+      </p>
+
+      <!-- Search Bar -->
+      <div class="max-w-xl">
+        <div class="relative">
+          <input
+            type="text"
+            id="artist-search"
+            placeholder="Search artists..."
+            class="w-full px-4 py-3 pl-11 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-colors"
+          />
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Artists Grid -->
+    <div id="artists-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {sortedArtists.map(artist => {
+        const reviewCount = reviewCounts[artist.id] || 0;
+        
+        return (
+          <a
+            href={`/${artist.id}`}
+            class="artist-card group block p-6 bg-zinc-900/50 border border-zinc-800 rounded-lg hover:border-blue-900/50 hover:bg-zinc-900/80 transition-all"
+            data-name={artist.data.name.toLowerCase()}
+          >
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex-1 min-w-0">
+                <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors mb-2 truncate">
+                  {artist.data.name}
+                </h3>
+                {artist.data.genre && (
+                  <div class="flex flex-wrap gap-2 mb-3">
+                    {artist.data.genre.map(g => (
+                      <span class="text-xs px-2 py-1 bg-zinc-800/50 border border-zinc-700 rounded text-zinc-400">
+                        {g}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <p class="text-sm text-zinc-500">
+                  {reviewCount} {reviewCount === 1 ? 'review' : 'reviews'}
+                </p>
+              </div>
+              <svg class="w-5 h-5 text-zinc-600 group-hover:text-blue-500 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+
+    <!-- No Results Message -->
+    <div id="no-results" class="hidden text-center py-12">
+      <svg class="w-16 h-16 mx-auto mb-4 text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p class="text-zinc-400 text-lg">No artists found</p>
+      <p class="text-zinc-500 text-sm mt-2">Try adjusting your search</p>
+    </div>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('artist-search') as HTMLInputElement;
+    const artistCards = document.querySelectorAll('.artist-card') as NodeListOf<HTMLElement>;
+    const noResults = document.getElementById('no-results');
+    const grid = document.getElementById('artists-grid');
+
+    searchInput?.addEventListener('input', (e) => {
+      const searchTerm = (e.target as HTMLInputElement).value.toLowerCase().trim();
+      let visibleCount = 0;
+
+      artistCards.forEach(card => {
+        const name = card.dataset.name || '';
+        const matches = name.includes(searchTerm);
+        
+        if (matches) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Show/hide no results message
+      if (visibleCount === 0 && searchTerm.length > 0) {
+        noResults?.classList.remove('hidden');
+        grid?.classList.add('hidden');
+      } else {
+        noResults?.classList.add('hidden');
+        grid?.classList.remove('hidden');
+      }
+    });
+  </script>
+</BaseLayout>

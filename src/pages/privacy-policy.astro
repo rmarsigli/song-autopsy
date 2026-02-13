@@ -2,6 +2,7 @@
 import { getEntry } from 'astro:content'
 import BaseLayout from '../layouts/base-layout.astro'
 import Breadcrumb from '../components/breadcrumb.astro'
+import { getSiteUrl } from '../utils/review-helpers'
 
 const page = await getEntry('pages', 'privacy-policy')
 
@@ -15,9 +16,22 @@ const breadcrumbItems = [
   { label: 'Home', href: '/' },
   { label: page.data.title },
 ]
+
+const siteUrl = getSiteUrl();
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: page.data.title,
+  description: page.data.description,
+  url: `${siteUrl}/privacy-policy`,
+}
 ---
 
-<BaseLayout title={`${page.data.title} - The Lyrics Sommelier`}>
+<BaseLayout 
+  title={page.data.title}
+  description={page.data.description}
+  schema={webPageSchema}
+>
   <div class="mx-auto max-w-4xl px-4 py-8">
     <Breadcrumb items={breadcrumbItems} />
 
