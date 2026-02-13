@@ -13,6 +13,7 @@
     "migrate:dates": "tsx scripts/migrate-analyzed-at.ts"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.0",
     "@google/generative-ai": "^0.24.1",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.18",
