@@ -13,7 +13,8 @@
     "generate:albums": "tsx scripts/generate-albums.ts",
     "migrate:dates": "tsx scripts/migrate-analyzed-at.ts",
     "migrate:albums": "tsx scripts/migrate-albums.ts",
-    "fix:albums": "tsx scripts/fix-album-paths.ts"
+    "fix:albums": "tsx scripts/fix-album-paths.ts",
+    "migrate:artists": "tsx scripts/migrate-artists.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.0",
