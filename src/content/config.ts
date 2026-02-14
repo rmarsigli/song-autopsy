@@ -1,15 +1,16 @@
 import { defineCollection, z } from 'astro:content'
 
 const artistsCollection = defineCollection({
-  type: 'data',
+  type: 'content',
   schema: z.object({
     name: z.string(),
-    slug: z.string(),
-    genre: z.array(z.string()),
-    language: z.string(),
+    image: z.string().optional(),
+    spotify_id: z.string().optional(),
+    spotify_url: z.string().optional(),
+    genre: z.array(z.string()).optional(),
+    language: z.string().optional(),
     country: z.string().optional(),
     formed: z.string().optional(),
-    bio: z.string().optional(),
   }),
 })
 
@@ -21,9 +22,13 @@ const albumsCollection = defineCollection({
     year: z.string(),
     genre: z.array(z.string()).optional(),
     cover_art: z.string().optional(),
+    cover_image: z.string().optional(), 
+    spotify_id: z.string().optional(),
+    spotify_url: z.string().optional(),
     songs: z.array(z.object({
       slug: z.string(),
       name: z.string(),
+      spotify_id: z.string().optional(),
     })).optional(),
   }),
 })
