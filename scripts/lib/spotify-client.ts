@@ -6,24 +6,36 @@ const SPOTIFY_SECRET = process.env.SPOTIFY_SECRET!
 let cachedToken: string | null = null
 let tokenExpiry: number | null = null
 
-interface SpotifyArtist {
+interface SpotifyImage {
+  url: string
+  height: number
+  width: number
+}
+
+export interface SpotifyArtist {
   id: string
   name: string
   genres?: string[]
+  images?: SpotifyImage[]
   followers?: { total: number }
+  external_urls: { spotify: string }
 }
 
-interface SpotifyAlbum {
+export interface SpotifyAlbum {
   id: string
   name: string
   release_date: string
   album_type: string
+  images: SpotifyImage[]
+  external_urls: { spotify: string }
 }
 
-interface SpotifyTrack {
+export interface SpotifyTrack {
+  id: string
   name: string
   track_number: number
   duration_ms: number
+  external_urls: { spotify: string }
 }
 
 async function getAccessToken(): Promise<string> {
@@ -98,23 +110,45 @@ export async function getArtistAlbums(artistId: string): Promise<SpotifyAlbum[]>
 
 export async function getAlbumTracks(albumId: string) {
   const token = await getAccessToken()
-  
-  const response = await fetch(
-    `https://api.spotify.com/v1/albums/${albumId}`,
-    {
-      headers: { 'Authorization': `Bearer ${token}` }
-    }
-  )
+  const allTracks: SpotifyTrack[] = []
+  let url: string | null = `https://api.spotify.com/v1/albums/${albumId}/tracks?limit=50`
 
-  const data = await response.json()
+  while (url) {
+    const response = await fetch(url, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+
+    if (!response.ok) {
+      const errorBody = await response.text()
+      console.error(`   API Response: ${errorBody}`)
+      throw new Error(`Spotify API error: ${response.status} ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    const items: SpotifyTrack[] = data.items || []
+    allTracks.push(...items)
+    url = data.next
+  }
+  
+  // We need to fetch album details separately to get genres and release date
+  // since tracks endpoint doesn't return them
+  const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${albumId}`, {
+     headers: { 'Authorization': `Bearer ${token}` }
+  })
+  const albumData = await albumResponse.json()
+
   return {
-    name: data.name,
-    releaseDate: data.release_date,
-    genres: data.genres || [],
-    tracks: (data.tracks.items as SpotifyTrack[]).map(track => ({
+    name: albumData.name,
+    releaseDate: albumData.release_date,
+    genres: albumData.genres || [],
+    external_urls: albumData.external_urls,
+    images: albumData.images,
+    tracks: allTracks.map(track => ({
+      id: track.id,
       name: track.name,
       trackNumber: track.track_number,
-      duration: track.duration_ms
+      duration: track.duration_ms,
+      external_urls: track.external_urls
     }))
   }
 }
