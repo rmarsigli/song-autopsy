@@ -1,0 +1,12 @@
+---
+title: "Bleach: Deluxe Edition"
+artist_id: "nirvana"
+year: "1989"
+genre:
+  - Grunge
+  - Alternative Rock
+---
+
+# Bleach: Deluxe Edition
+
+*Album review content will be generated after all songs are analyzed.*
