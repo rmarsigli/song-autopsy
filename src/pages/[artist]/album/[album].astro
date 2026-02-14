@@ -39,7 +39,7 @@ const { albumReviews } = Astro.props as Props
 const firstReview = albumReviews[0]
 
 const artist = await getEntry('artists', firstReview.data.artist_id)
-const album = await getEntry('albums', firstReview.data.album_id)
+const album = await getEntry('albums', `${firstReview.data.artist_id}/${firstReview.data.album_id}`)
 
 if (!artist || !album) {
   throw new Error(`Missing artist or album data`)

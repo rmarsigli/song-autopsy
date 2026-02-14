@@ -28,7 +28,8 @@ type Props = {
 
 const { artistReviews } = Astro.props as Props
 const firstReview = artistReviews[0]
-const artist = await getEntry('artists', firstReview.data.artist_id)
+const artistSlug = firstReview.data.artist_id
+const artist = await getEntry('artists', artistSlug)
 
 if (!artist) {
   throw new Error(`Artist not found: ${firstReview.data.artist_id}`)
@@ -43,16 +44,19 @@ const albumStats = artistReviews.reduce((acc, review) => {
   const albumId = review.data.album_id
   if (!albumId) return acc
   
-  if (!acc[albumId]) {
-    acc[albumId] = {
-      albumId,
+  // Build full album ID path
+  const fullAlbumId = `${artistSlug}/${albumId}`
+  
+  if (!acc[fullAlbumId]) {
+    acc[fullAlbumId] = {
+      albumId: fullAlbumId,
       reviews: [],
       totalScore: 0,
     }
   }
   
-  acc[albumId].reviews.push(review)
-  acc[albumId].totalScore += review.data.final_score
+  acc[fullAlbumId].reviews.push(review)
+  acc[fullAlbumId].totalScore += review.data.final_score
   
   return acc
 }, {} as Record<string, { albumId: string, reviews: CollectionEntry<'reviews'>[], totalScore: number }>)

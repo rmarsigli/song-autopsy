@@ -43,7 +43,7 @@ const { review } = Astro.props as Props
 const { Content } = await review.render()
 
 const artist = await getEntry('artists', review.data.artist_id)
-const album = review.data.album_id ? await getEntry('albums', review.data.album_id) : null
+const album = review.data.album_id ? await getEntry('albums', `${review.data.artist_id}/${review.data.album_id}`) : null
 
 if (!artist) {
   throw new Error(`Missing artist data for review: ${review.id}`)
