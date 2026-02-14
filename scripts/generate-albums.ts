@@ -2,6 +2,7 @@
 import 'dotenv/config'
 import { searchArtist, getArtistAlbums, getAlbumTracks } from './lib/spotify-client.js'
 import { slugify, createFrontmatter } from './lib/utils.js'
+import { downloadImage } from './lib/image-downloader.js'
 import fs from 'fs/promises'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -89,14 +90,34 @@ async function main() {
     const albumDetails = await getAlbumTracks(album.id)
     const albumSlug = slugify(album.name)
     
+    // Download cover art
+    let coverImage = ''
+    if (albumDetails.images && albumDetails.images.length > 0) {
+      // Try to find 300x300 or closest, otherwise take first
+      const image = albumDetails.images.find(img => img.height === 300) || albumDetails.images[0]
+      if (image.url) {
+        try {
+          const relativePath = `covers/${artistSlug}/${albumSlug}.jpg`
+          console.log(`      ⬇️  Downloading cover art...`)
+          coverImage = await downloadImage(image.url, relativePath)
+        } catch (e) {
+          console.error(`      ⚠️  Failed to download cover: ${e}`)
+        }
+      }
+    }
+
     const frontmatter = createFrontmatter({
       title: albumDetails.name,
       artist_id: artistSlug,
       year: album.release_date.substring(0, 4),
       genre: albumDetails.genres.length > 0 ? albumDetails.genres : selectedArtist.genres || [],
+      cover_image: coverImage,
+      spotify_id: album.id,
+      spotify_url: albumDetails.external_urls.spotify,
       songs: albumDetails.tracks.map(track => ({
         slug: slugify(track.name),
-        name: track.name
+        name: track.name,
+        spotify_id: track.id
       }))
     })
 
