@@ -9,7 +9,7 @@ const allArtists = await getCollection('artists');
 const allExaminers = await getCollection('examiners');
 
 const artistMap = Object.fromEntries(
-  allArtists.map(artist => [artist.id, artist.data.name])
+  allArtists.map(artist => [artist.slug, artist.data.name])
 );
 
 const reviewsWithArtist = allReviews.map(review => ({

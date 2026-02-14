@@ -12,14 +12,14 @@ export function calculateAverageScore(reviews: CollectionEntry<'reviews'>[]): st
 /**
  * Sort reviews by score (descending)
  */
-export function sortByScore(reviews: CollectionEntry<'reviews'>[]): CollectionEntry<'reviews'>[] {
+export function sortByScore<T extends CollectionEntry<'reviews'>>(reviews: T[]): T[] {
   return [...reviews].sort((a, b) => b.data.final_score - a.data.final_score)
 }
 
 /**
  * Sort reviews by date (newest first)
  */
-export function sortByDate(reviews: CollectionEntry<'reviews'>[]): CollectionEntry<'reviews'>[] {
+export function sortByDate<T extends CollectionEntry<'reviews'>>(reviews: T[]): T[] {
   return [...reviews].sort((a, b) => 
     new Date(b.data.analyzed_at).getTime() - new Date(a.data.analyzed_at).getTime()
   )
