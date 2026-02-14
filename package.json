@@ -10,7 +10,10 @@
     "process-review": "tsx scripts/process-review.ts",
     "generate": "tsx scripts/generate-reviews.ts",
     "generate:web": "tsx scripts/generate-web.ts",
-    "migrate:dates": "tsx scripts/migrate-analyzed-at.ts"
+    "generate:albums": "tsx scripts/generate-albums.ts",
+    "migrate:dates": "tsx scripts/migrate-analyzed-at.ts",
+    "migrate:albums": "tsx scripts/migrate-albums.ts",
+    "fix:albums": "tsx scripts/fix-album-paths.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.0",
@@ -30,6 +33,7 @@
     "@iconify/json": "^2.2.439",
     "@types/prompts": "^2.4.9",
     "dotenv": "^17.3.1",
+    "gray-matter": "^4.0.3",
     "prompts": "^2.4.2",
     "unplugin-icons": "^23.0.1"
   }
