@@ -14,13 +14,17 @@ const artistsCollection = defineCollection({
 })
 
 const albumsCollection = defineCollection({
-  type: 'data',
+  type: 'content',
   schema: z.object({
     title: z.string(),
     artist_id: z.string(),
     year: z.string(),
     genre: z.array(z.string()).optional(),
     cover_art: z.string().optional(),
+    songs: z.array(z.object({
+      slug: z.string(),
+      name: z.string(),
+    })).optional(),
   }),
 })
 
