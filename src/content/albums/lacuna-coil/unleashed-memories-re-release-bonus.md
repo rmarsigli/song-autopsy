@@ -1,0 +1,47 @@
+---
+title: "Unleashed Memories (Re-Release + Bonus)"
+artist_id: "lacuna-coil"
+year: "2005"
+genre: []
+cover_image: "/covers/lacuna-coil/unleashed-memories-re-release-bonus.jpg"
+spotify_id: "3FQgJtOcKfuTlRkKIkCAV2"
+spotify_url: "https://open.spotify.com/album/3FQgJtOcKfuTlRkKIkCAV2"
+songs:
+  - slug: "heir-of-a-dying-day"
+    name: "Heir Of A Dying Day"
+    spotify_id: "31Aiszgp4sJvH3PM7INpUw"
+  - slug: "to-live-is-to-hide"
+    name: "To Live Is To Hide"
+    spotify_id: "3yWIPGvQ7QcOhKx2gNImQW"
+  - slug: "purify"
+    name: "Purify"
+    spotify_id: "0hpTxcKVbKWP1b629LVrrc"
+  - slug: "senzafine"
+    name: "Senzafine"
+    spotify_id: "0WZXtSE1w08YDvU0nA7nF7"
+  - slug: "when-a-dead-man-walks"
+    name: "When A Dead Man Walks"
+    spotify_id: "2RMhhkP2gjiC7AHqZgj7k1"
+  - slug: "119"
+    name: "1:19"
+    spotify_id: "6ydYuR0udMoAuzNkkKrUwz"
+  - slug: "cold-heritage"
+    name: "Cold Heritage"
+    spotify_id: "2KgC4o9GfQrcICKyntMQ2a"
+  - slug: "distant-sun"
+    name: "Distant Sun"
+    spotify_id: "2VJwgR9hIUjF93JsNH06Yw"
+  - slug: "a-current-obsession"
+    name: "A Current Obsession"
+    spotify_id: "0E9DrmjMANYC0MhGn29Fgy"
+  - slug: "wave-of-anguish"
+    name: "Wave Of Anguish"
+    spotify_id: "7wg1rPkfGx4MQjc0m1KRGB"
+  - slug: "lost-lullaby"
+    name: "Lost Lullaby"
+    spotify_id: "2XMPc6sut2htNPxsZ8RWQH"
+---
+
+# Unleashed Memories (Re-Release + Bonus)
+
+*Album review content will be generated after all songs are analyzed.*

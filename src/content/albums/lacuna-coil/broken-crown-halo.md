@@ -1,0 +1,47 @@
+---
+title: "Broken Crown Halo"
+artist_id: "lacuna-coil"
+year: "2014"
+genre: []
+cover_image: "/covers/lacuna-coil/broken-crown-halo.jpg"
+spotify_id: "6P5nvFW7lUOwGGvDNYuVvG"
+spotify_url: "https://open.spotify.com/album/6P5nvFW7lUOwGGvDNYuVvG"
+songs:
+  - slug: "nothing-stands-in-our-way"
+    name: "Nothing Stands in Our Way"
+    spotify_id: "20gUq53TwfLsyq7AIUL2tt"
+  - slug: "zombies"
+    name: "Zombies"
+    spotify_id: "0gGYt8EdfU39d3IAMONxA3"
+  - slug: "hostage-to-the-light"
+    name: "Hostage to the Light"
+    spotify_id: "0luo6xtSEr8N5j7F3qYk8H"
+  - slug: "victims"
+    name: "Victims"
+    spotify_id: "488mB1XAyHdmLjH5T9S0GD"
+  - slug: "die-rise"
+    name: "Die & Rise"
+    spotify_id: "1cjay4ZRHLUEPPYK9sWFI7"
+  - slug: "i-forgive-but-i-wont-forget-your-name"
+    name: "I Forgive (But I Won't Forget Your Name)"
+    spotify_id: "6sBzoJcptqlnns1eJ03wXF"
+  - slug: "cybersleep"
+    name: "Cybersleep"
+    spotify_id: "4i1xwl9QefDGyHnohJIDCF"
+  - slug: "infection"
+    name: "Infection"
+    spotify_id: "4KjAoFtWhM9V5llvpvPJcY"
+  - slug: "i-burn-in-you"
+    name: "I Burn in You"
+    spotify_id: "5ZRePOCh5s2UeNWmewGWOu"
+  - slug: "in-the-end-i-feel-alive"
+    name: "In the End I Feel Alive"
+    spotify_id: "2Azfh2uTyTDlx3ia8srEmZ"
+  - slug: "one-cold-day"
+    name: "One Cold Day"
+    spotify_id: "0JhgYG57glAanBfyxs8ziA"
+---
+
+# Broken Crown Halo
+
+*Album review content will be generated after all songs are analyzed.*

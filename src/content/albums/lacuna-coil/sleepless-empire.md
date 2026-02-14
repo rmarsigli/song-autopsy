@@ -1,0 +1,47 @@
+---
+title: "Sleepless Empire"
+artist_id: "lacuna-coil"
+year: "2025"
+genre: []
+cover_image: "/covers/lacuna-coil/sleepless-empire.jpg"
+spotify_id: "2z6a4yNBjfxi9QvMheDRQ8"
+spotify_url: "https://open.spotify.com/album/2z6a4yNBjfxi9QvMheDRQ8"
+songs:
+  - slug: "the-siege"
+    name: "The Siege"
+    spotify_id: "0QP6Q6euM4X32r5aEjmkjO"
+  - slug: "oxygen"
+    name: "Oxygen"
+    spotify_id: "4EsCBMrhAjCNu84DAo1tOn"
+  - slug: "scarecrow"
+    name: "Scarecrow"
+    spotify_id: "7n2Owf2gUqmA56z0EtSj1E"
+  - slug: "gravity"
+    name: "Gravity"
+    spotify_id: "1ipx7qJSnTuFuPGnPnLWp8"
+  - slug: "i-wish-you-were-dead"
+    name: "I Wish You Were Dead"
+    spotify_id: "0jGmBA9jESBGNHE9FK6mST"
+  - slug: "hosting-the-shadow-feat-randy-blythe"
+    name: "Hosting the Shadow (feat. Randy Blythe)"
+    spotify_id: "6VkkDO5w32HXkgdCDPz9E3"
+  - slug: "in-nomine-patris"
+    name: "In Nomine Patris"
+    spotify_id: "74QRAFSEekM23ko7rw3tSh"
+  - slug: "sleepless-empire"
+    name: "Sleepless Empire"
+    spotify_id: "2FkmtjSm3iaAxMrlImcf4D"
+  - slug: "sleep-paralysis"
+    name: "Sleep Paralysis"
+    spotify_id: "4tVSXlsExJmQZA2MYph5cu"
+  - slug: "in-the-mean-time-feat-ash-costello"
+    name: "In The Mean Time (feat. Ash Costello)"
+    spotify_id: "4eSRDo13CYKmKRFeX98KH5"
+  - slug: "never-dawn"
+    name: "Never Dawn"
+    spotify_id: "1GVFgRmh2yOam7YsezAQBj"
+---
+
+# Sleepless Empire
+
+*Album review content will be generated after all songs are analyzed.*
